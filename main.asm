@@ -49,13 +49,16 @@ scorehunds = $40fd
 scorethous = $40fa 
 bulletcolor = $2055
 shuf = $6c00
-clscount = $4a00
+increment = $4a00
 currentcell = $03
 scrollvalue = $37
 scrolltrigger = $38
 positionlbuffer = $39
 positionlbuffer2 = $40
 reversezp = $41
+reversezp2 = $46
+reversezp3 = $47
+reversezp4 = $48
 reversetrigger = $42
 joysttrig = $43
 bullettrigger = $44
@@ -162,7 +165,7 @@ sta wallsbuffer
 sta shuf
 lda #$04
 sta positionh
-lda #123
+lda #87
 sta character
 lda #79
 sta character1
@@ -296,23 +299,21 @@ loadwalls
 ldx #0  
  
 loadwallsloop  
-inx
-lda wallpix,x
 
-adc #23
+lda wallpix,x
  
  
  sta wallsbuffer,x
- 
+ inx
 
 
  
-cpx #255
+cpx #46
  bne loadwallsloop
 ldy #0
 mainloop
-
-
+lda #40
+sta increment
 bypass
 safearea
 
@@ -325,13 +326,32 @@ jsr movejoy
  
 
 
+createwalls
+          
+ 
+ldx #0  
+ 
+createwallsloop 
+
+ 
+ inx
+ 
+ lda wallsbuffer,x
+ adc scrollvalue
+
+ sta wallsbuffer,x
+ 
+lda wallsbuffer,x
+ adc increment
+ sta wallsbuffer,x
+ 
+cpx #45
+ bne createwallsloop
 
 
 
 
-
-
-
+ 
 
 
 
@@ -381,30 +401,13 @@ sta $daf0,y
  cpy #0
 
  bne clsloop
- inc clscount
+ 
 
-  lda #40
- sta scrollvalue
+  
+ 
  lda #1
 sta joystktr
-displaywalls
-ldy #0
-displaywalllp
-iny
-lda wallsbuffer,y
-adc scrollvalue
-sta wallsbuffer,y
- jsr displaywallspg1
- 
- jsr displaywallspg2
- 
- 
- jsr displaywallspg3
-    
 
-jsr displaywallspg4
-cpy #255
-bne displaywalllp
  ldy #0
  
 
@@ -444,7 +447,21 @@ ldy #$0
 wallsdisplayed
   ldx #0
  
+displaywalls
+ldy #0
+ldx #0
+displaywalllp
+inx
 
+ 
+ lda wallsbuffer,x
+ 
+ tay
+ jsr displaywallspg1
+ jsr collisioncheck
+ 
+cpx #46
+bne displaywalllp
 
  
  
@@ -462,7 +479,29 @@ wallsdisplayed
 jmp mainloop
 
 rts
+destroywalls
+ 
+destroywalllp
+ 
 
+ lda reversezp
+adc #1
+sta reversezp
+adc #1
+ 
+sta reversezp2
+ adc #1
+sta reversezp3
+ adc #1
+ 
+sta reversezp4
+ 
+  
+  
+ 
+ 
+ 
+rts
 scrolling
 
 
@@ -581,7 +620,8 @@ cmp #23
 bne soleft
 rts
 soleft
-
+lda #1
+sta scrollvalue
 jsr addscore
    
     lda positionl
@@ -603,10 +643,13 @@ sta positionl
 rts
 right 
 lda joystktr
-cmp #29
+cmp #48
 bne soright
 rts
 soright
+lda #254
+sta scrollvalue
+
 jsr addscore
  lda positionl
     clc
@@ -633,6 +676,9 @@ cmp #28
 bne sodown
 rts
 sodown
+lda #216
+sta scrollvalue
+
 jsr addscore
  
    
@@ -658,6 +704,9 @@ cmp #26
 bne soup
 rts
 soup 
+
+lda #40
+sta scrollvalue
 jsr addscore
  
   lda positionl
@@ -793,10 +842,10 @@ displaybulletpg1
 
 lda bulletchar
 sta $0400,x
- sta $0401,x
+; sta $0401,x
 lda bulletcolor
 sta $d800,x
- sta $d801,x
+ ;sta $d801,x
  
 
 
@@ -805,10 +854,10 @@ displaybulletpg2
  
 lda bulletchar
 sta $0500,x
-sta $0501,x
+;sta $0501,x
 lda bulletcolor
 sta $d900,x
-sta $d901,x
+;sta $d901,x
  
 rts
 displaybulletpg3
@@ -818,10 +867,10 @@ displaybulletpg3
 lda bulletchar
 
 sta $0600,x
- sta $0601,x
+; sta $0601,x
 lda bulletcolor
 sta $da00,x
- sta $da01,x
+ ;sta $da01,x
   
  rts
 
@@ -832,10 +881,10 @@ displaybulletpg4
 lda bulletchar
 sta $0700,x
  
- sta $0701,x
+; sta $0701,x
 lda bulletcolor
 sta $db00,x
- sta $db01,x
+; sta $db01,x
  
  rts
 incroppbulletpositionh
@@ -1160,105 +1209,80 @@ rts
 displaywallspg1
  
 
-displaywallspg1lp
  
-lda wallsbuffer,y
- 
-tax
-lda wallschar
-sta $0400,x
- 
-lda wallscolour
-sta $d800,x
-   
- lda positionh
-cmp #$1
- 
-beq collisioncheck
-rts 
-displaywallspg2
  
 
-displaywallspg2lp
  
-lda wallsbuffer,y
+
+lda wallschar
+sta $0400,y
  
-tax
+lda wallscolour
+sta $d800,y
+  sty reversezp 
+ldy reversezp 
+
+ 
+ 
+ 
+ 
 
  lda wallschar
-sta $0500,x
+sta $0500,y
  
 lda wallscolour
-sta $d900,x
- lda positionh
-cmp #$2
+sta $d900,y
  
-beq collisioncheck
  
-rts 
-displaywallspg3
+ sty reversezp2
+ ldy reversezp2 
  
-
-displaywallspg3lp
  
-lda wallsbuffer,y
  
-tax
+ 
+ 
 
 lda wallschar
-sta $0600,x
+sta $0600,y
  
 lda wallscolour
-sta $da00,x
-lda positionh
-cmp #$3
+sta $da00,y
  
-beq collisioncheck 
- 
- 
-rts
- 
-displaywallspg4
- 
-
-displaywallspg4lp
+  sty reversezp3
+ ldy reversezp3 
  
  
  
  
- 
-lda wallsbuffer,y
- 
-tax
 
 lda wallschar
-sta $0700,x
+sta $0700,y
 
 lda wallscolour
-sta $db00,x
-lda positionh
-cmp #$4
- 
-beq collisioncheck
- 
+sta $db00,y
+ sty reversezp4
+ ldy reversezp4 
   
 
 rts
 collisioncheck
-txa
-adc #1
+lda reversezp
+ adc #1
 cmp positionl
 beq noleft2
-txa 
+collisioncheckup
+lda reversezp2
 adc #40
 cmp positionl
 beq noup2
-txa
+collisioncheckdown
+lda reversezp3
 sbc #40
 cmp positionl
 beq nodown2
-txa
-sbc #1
+collisioncheckright 
+ lda reversezp4
+ adc #255
 cmp positionl
 beq noright2
   
@@ -1270,6 +1294,7 @@ lda #23
 sta joystktr
 lda #0
 sta scrollvalue
+jsr destroywalls
 rts
  
 noup2
@@ -1278,6 +1303,7 @@ sta joystktr
 
 lda #0
 sta scrollvalue
+jsr destroywalls
 rts 
  
 nodown2
@@ -1285,14 +1311,17 @@ lda #28
 sta joystktr
 lda #0
 sta scrollvalue
+jsr destroywalls
 rts 
 
  
 noright2
-lda #29
+lda #48
 sta joystktr
 lda #0
 sta scrollvalue
+
+jsr destroywalls
 rts
 showgameover 
 
@@ -1544,10 +1573,10 @@ circle7
 circle8 
  !byte %0000000
  
-wallpix !byte 0,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255  
+wallpix !byte 1,2,3,4,5,6,7,8,9,41,42,43,44,45,46,47,48,49,81,82,83,84,85,86,87,88,89,121,122,123,124,125,126,127,128,129,161,162,163,164,165,166,167,168,169,201,202,203,204,205,206,207,208,209 
 somenum2
 !byte 15,20,35,40,55,60,75,80,95,100,115,120,135,140,155,160,175,180,195,200,215,220,235,240
-wallsbuffer !byte 0,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255, 255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255,255  
+wallsbuffer !byte 1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250
  
  
 theship   !byte   %00000001
