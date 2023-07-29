@@ -276,52 +276,49 @@ displaywallslp
 
 backtowherewewere 
  
- ldx wallsbuffer,y
+ lda wallsbuffer,y
 
- stx zp
+ sty zp
  
- 
-lda wallschar
-sta $0400,x
+sta $0400,y
  
 lda wallscolour
-sta $d800,x
+sta $d800,y
 
  
  
- ldx wallsbuffer2,y
-stx zp2
+ lda wallsbuffer2,y
+sta zp2
  
-
- lda wallschar
-sta $0500,x
+ 
+sta $0500,y
  
 lda wallscolour
-sta $d900,x
+sta $d900,y
  
  
 
  
- ldx wallsbuffer3,y
- stx zp3
+ lda wallsbuffer3,y
+ sta zp3
  
  
-lda wallschar
-sta $0600,x
+ 
+sta $0600,y
  
 lda wallscolour
-sta $da00,x
+sta $da00,y
  
 
-ldx wallsbuffer4,y
-stx zp4
+lda wallsbuffer4,y
+sta zp4
  
 
-lda wallschar
-sta $0700,x
+ 
+sta $0700,y
 
 lda wallscolour
-sta $db00,x
+sta $db00,y
 
 
 jsr collisionhi 
@@ -338,65 +335,149 @@ bne displaywallslp
 collisionhi
 lda positionh
 cmp #1
-beq collidepage1br
+ beq collidepage1br
 lda positionh
 cmp #2
-beq collidepage2br
+ beq collidepage2br
 lda positionh
 cmp #3
 beq collidepage3br
 lda positionh
 cmp #4
-beq collidepage4br
+ beq collidepage4br
 rts
 collidepage1br
-jmp collidepage1
+ jmp collidepage1
 rts
 collidepage2br
-jmp collidepage2
+ jmp collidepage2
 rts
 collidepage3br
 jmp collidepage3
 rts
 collidepage4br
-jmp collidepage4
+ jmp collidepage4
 rts
-collidepage4
-lda zp4
-adc #1
-cmp positionl 
-beq noleft2
-lda zp4
-adc #40
-cmp positionl 
-beq noup2
-lda zp4
-sbc #40
-cmp positionl 
-beq nodown2
-lda zp4
+ 
+collidepage2
+lda positionl
 sbc #1
-cmp positionl 
-beq noright2
+tax
+lda wallsbuffer2,x
+cmp #76
+beq jsnoleft
+lda positionl
+adc #1
+tax
+lda wallsbuffer2,x
+cmp #76
+beq jsnoright
+lda positionl
+sbc #39
+tax
+lda wallsbuffer2,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer2,x
+cmp #76
+beq jsnodown
 rts 
-collidepage3
-lda zp3 
-adc #1
-cmp positionl 
-beq noleft2
-lda zp3
-adc #40
-cmp positionl 
-beq noup2
-lda zp3
-sbc #40
-cmp positionl 
-beq nodown2
-lda zp3
+collidepage4
+lda positionl
 sbc #1
-cmp positionl 
-beq noright2
-rts   
+tax
+lda wallsbuffer4,x
+cmp #76
+beq jsnoleft
+lda positionl
+adc #1
+tax
+lda wallsbuffer4,x
+cmp #76
+beq jsnoright
+lda positionl
+sbc #39
+tax
+lda wallsbuffer4,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer4,x
+cmp #76
+beq jsnodown
+rts
+jsnoleft
+jsr noleft2
+rts
+jsnoright
+jsr noright2
+rts
+jsnoup
+jsr noup2
+rts
+jsnodown
+jsr nodown2
+rts
+
+collidepage3
+lda positionl
+sbc #1
+tax
+lda wallsbuffer3,x
+cmp #76
+beq jsnoleft
+lda positionl
+adc #1
+tax
+lda wallsbuffer3,x
+cmp #76
+beq jsnoright
+lda positionl
+sbc #39
+tax
+lda wallsbuffer3,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer3,x
+cmp #76
+beq jsnodown
+rts
+collidepage1
+lda positionl
+sbc #1
+tax
+lda wallsbuffer,x
+cmp #76
+beq jsnoleft
+lda positionl
+adc #1
+tax
+lda wallsbuffer,x
+cmp #76
+beq jsnoright
+lda positionl
+sbc #39
+tax
+lda wallsbuffer,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer,x
+cmp #76
+beq jsnodown
+rts
+ 
+ 
 nodown2
 lda #28
 sta joystktr
@@ -424,50 +505,6 @@ sta joystktr
 lda #0
 sta scrollvalue
 rts 
-
-
-
-
-
-collidepage1
-lda zp
-adc #1
-cmp positionl
-beq noleft2
-lda zp
-adc #40
-cmp positionl
-beq noup2
-lda zp
-sbc #40
-cmp positionl
-beq nodown2
-lda zp
-sbc #1
-cmp positionl
-beq noright2
-rts 
- 
-collidepage2
-lda zp2
-adc #1
-cmp positionl 
-beq noleft2
-lda zp2
-adc #40
-cmp positionl 
-beq noup2
-lda zp2
-sbc #40
-cmp positionl 
-beq nodown2
-lda zp2
-sbc #1
-cmp positionl 
-beq noright2
-rts 
- 
-
 
 
 
