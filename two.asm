@@ -93,8 +93,8 @@ ldy #0
 displayloop
 clc
 lda positionh
-ldx positionl
-cpx #255
+ldy positionl
+cpy #255
 beq bypass4
 cmp #$01
 beq displaypageone
@@ -110,19 +110,19 @@ rts
 displaypageone
 
 lda character 
-sta $0400,x
+sta $0400,y
  
 lda charactercolour
-sta $d800,x
+sta $d800,y
  
 rts
 displaypagetwo
 
 lda character 
-sta $0500,x
+sta $0500,y
  
 lda charactercolour
-sta $d900,x
+sta $d900,y
  
  
 rts
@@ -130,20 +130,20 @@ displaypagefour
  
 
 lda character
-sta $0700,x
+sta $0700,y
  
 lda charactercolour
-sta $db00,x
+sta $db00,y
  
 rts
 
 displaypagethree
  
 lda character
-sta $0600,x
+sta $0600,y
  
 lda charactercolour
-sta $da00,x 
+sta $da00,y
  
  
 rts
@@ -267,4 +267,211 @@ sta $db00,x
  
  rts
  
+displaywalls
+ldx #0
+ldy #0
  
+displaywallslp
+
+
+backtowherewewere 
+ 
+ ldx wallsbuffer,y
+
+ stx zp
+ 
+ 
+lda wallschar
+sta $0400,x
+ 
+lda wallscolour
+sta $d800,x
+
+ 
+ 
+ ldx wallsbuffer2,y
+stx zp2
+ 
+
+ lda wallschar
+sta $0500,x
+ 
+lda wallscolour
+sta $d900,x
+ 
+ 
+
+ 
+ ldx wallsbuffer3,y
+ stx zp3
+ 
+ 
+lda wallschar
+sta $0600,x
+ 
+lda wallscolour
+sta $da00,x
+ 
+
+ldx wallsbuffer4,y
+stx zp4
+ 
+
+lda wallschar
+sta $0700,x
+
+lda wallscolour
+sta $db00,x
+
+
+jsr collisionhi 
+
+ iny
+cpy #255
+
+
+bne displaywallslp
+
+
+ 
+ rts
+collisionhi
+lda positionh
+cmp #1
+beq collidepage1br
+lda positionh
+cmp #2
+beq collidepage2br
+lda positionh
+cmp #3
+beq collidepage3br
+lda positionh
+cmp #4
+beq collidepage4br
+rts
+collidepage1br
+jmp collidepage1
+rts
+collidepage2br
+jmp collidepage2
+rts
+collidepage3br
+jmp collidepage3
+rts
+collidepage4br
+jmp collidepage4
+rts
+collidepage4
+lda zp4
+adc #1
+cmp positionl 
+beq noleft2
+lda zp4
+adc #40
+cmp positionl 
+beq noup2
+lda zp4
+sbc #40
+cmp positionl 
+beq nodown2
+lda zp4
+sbc #1
+cmp positionl 
+beq noright2
+rts 
+collidepage3
+lda zp3 
+adc #1
+cmp positionl 
+beq noleft2
+lda zp3
+adc #40
+cmp positionl 
+beq noup2
+lda zp3
+sbc #40
+cmp positionl 
+beq nodown2
+lda zp3
+sbc #1
+cmp positionl 
+beq noright2
+rts   
+nodown2
+lda #28
+sta joystktr
+lda #0
+sta scrollvalue
+rts 
+
+noright2
+lda #48
+sta joystktr
+lda #0
+sta scrollvalue
+rts
+ 
+noleft2
+lda #23
+sta joystktr
+lda #0
+sta scrollvalue
+rts
+ 
+noup2
+lda #26
+sta joystktr
+lda #0
+sta scrollvalue
+rts 
+
+
+
+
+
+collidepage1
+lda zp
+adc #1
+cmp positionl
+beq noleft2
+lda zp
+adc #40
+cmp positionl
+beq noup2
+lda zp
+sbc #40
+cmp positionl
+beq nodown2
+lda zp
+sbc #1
+cmp positionl
+beq noright2
+rts 
+ 
+collidepage2
+lda zp2
+adc #1
+cmp positionl 
+beq noleft2
+lda zp2
+adc #40
+cmp positionl 
+beq noup2
+lda zp2
+sbc #40
+cmp positionl 
+beq nodown2
+lda zp2
+sbc #1
+cmp positionl 
+beq noright2
+rts 
+ 
+
+
+
+
+ 
+
+
+

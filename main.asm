@@ -15,8 +15,8 @@ lofreq   =$35
 wavefm   =$36
 whiteblock =$37
 appleblock =$38
-positionh =$6044
-positionl =$6045
+positionh =$49
+positionl =$46
 character =$4006
 character1 =$4007
 character2 =$4008
@@ -27,7 +27,7 @@ bgcolor =$024
 charactertemporary = $026
 charactercolour = $27
 wallschar = $6677
-wallscolour = $41
+wallscolour = $71
 objectschar2 = $6689
 objectschar3 = $6643
 objectschar4 = $6699
@@ -55,10 +55,10 @@ scrollvalue = $37
 scrolltrigger = $38
 positionlbuffer = $39
 positionlbuffer2 = $40
-reversezp = $41
-reversezp2 = $46
-reversezp3 = $47
-reversezp4 = $48
+zp = $75
+zp2 = $72
+zp3 = $73
+zp4 = $74
 reversetrigger = $42
 joysttrig = $43
 bullettrigger = $44
@@ -153,8 +153,7 @@ lda #26
 sta positionl
 ldx #0
 ldy #0
-lda #41
-sta reversezp
+ 
 lda #0
 
 sta $d021
@@ -304,61 +303,26 @@ lda wallpix,x
  
  
  sta wallsbuffer,x
+  ror
+  sta wallsbuffer2,x
+   ror
+   sta wallsbuffer3,x
+    ror
+    sta wallsbuffer4,x
  inx
 
 
  
-cpx #46
+cpx #255
  bne loadwallsloop
 ldy #0
+
+
+
+
+
 mainloop
-lda #40
-sta increment
-bypass
-safearea
-
-jsr scanjoy
  
-
-
-jsr movejoy
-
- 
-
-
-createwalls
-          
- 
-ldx #0  
- 
-createwallsloop 
-
- 
- inx
- 
- lda wallsbuffer,x
- adc scrollvalue
-
- sta wallsbuffer,x
- 
-lda wallsbuffer,x
- adc increment
- sta wallsbuffer,x
- 
-cpx #45
- bne createwallsloop
-
-
-
-
- 
-
-
-
-
-
-
-
 
 
 
@@ -383,10 +347,7 @@ sta $0400,y
 sta $0500,y  
 sta $0600,y
 sta $06f0,y
-;cpy #255
-;bne clsloop
-;ldy #$0
-;ldx #0
+ 
 clsloop2
 ;dex
 lda #0
@@ -403,28 +364,22 @@ sta $daf0,y
  bne clsloop
  
 
-  
  
- lda #1
-sta joystktr
+lda #1
+sta joystktr 
 
- ldy #0
- 
-
- 
- ldx #$0
- 
-   ldy #0
- 
 jsr display
  
  ldx #$0
+ 
+   ldy #0
+
+ 
   
  
    ldy #0
  
-
- ldx #0
+ 
  
  jsr displaybullet
 
@@ -433,49 +388,21 @@ ldy #$0
  
 
  
- ldx #$0
  
  
 
  jsr printscore
-  
-
-
- ldx #0
-ldy #$0
-
-wallsdisplayed
-  ldx #0
- 
-displaywalls
-ldy #0
-ldx #0
-displaywalllp
-inx
-
- 
- lda wallsbuffer,x
- 
- tay
- jsr displaywallspg1
- jsr collisioncheck
- 
-cpx #46
-bne displaywalllp
-
- 
- 
- 
  
 
+;  
+
+ 
+jsr displaywalls
+
+ jsr dojoy
+jsr movejoy
 
 
- 
-
-;inc charactercolour
- 
- 
- 
 jmp mainloop
 
 rts
@@ -484,17 +411,6 @@ destroywalls
 destroywalllp
  
 
- lda reversezp
-adc #1
-sta reversezp
-adc #1
- 
-sta reversezp2
- adc #1
-sta reversezp3
- adc #1
- 
-sta reversezp4
  
   
   
@@ -534,43 +450,7 @@ cls
  
  
  
-scanjoy            
-          
-           lda $dc00
-          jsr storekey
-             
- 
-           rts
-fire	
- lda bullettrigger
- cmp #0
 
- beq fire2 
- rts
-fire2
- 
-lda positionl
-sta bulletpositionl
-
- lda positionh
-sta bulletpositionh
- 
- 
-  jsr lazbeep1 
-  
-   
- 
-
-
- 
-notascore
- 
-
-lda #$7f
-sta lastkey
- 
-
-rts
 checkscoreones
 
  lda scoreones
@@ -583,194 +463,14 @@ loadwallsbrid
 jsr loadwalls
 rts
 storekey 
-ldy #0
-cpy joysttrig
-beq dojoy
+ 
 
   
     
  
 rts
-dojoy
-sta lastkey
-rts
- 
-movejoy 
-                
-                lda lastkey
-                cmp #$6f
-                beq fire
-                cmp #$7b   
-				beq left 
-				cmp #$7e   
-				beq up
-				cmp #$77    
-				beq right
-				cmp #$7d   
-				beq down
-               
-				rts
-				
- 
-
-left 
-  
-lda joystktr
-cmp #23
-bne soleft
-rts
-soleft
-lda #1
-sta scrollvalue
-jsr addscore
-   
-    lda positionl
-    sec
-    sbc #01
-    sta positionl
-    sta positionlbuffer
-  bcc counterrecount
-   lda #01
- sta scrolltrigger
-   
-     
-    rts
-counterrecount
-jsr decreasehibyte
-lda #255
-sta positionl
- 
-rts
-right 
-lda joystktr
-cmp #48
-bne soright
-rts
-soright
-lda #254
-sta scrollvalue
-
-jsr addscore
- lda positionl
-    clc
-    adc #01
-    sta positionl
-  sta positionlbuffer
-  bcs recount
-    
-      lda #01
- sta scrolltrigger
-   
-    rts
-recount
-jsr incresehighbyte
-lda #0
-sta positionl
- 
-rts
-
-down
-
-lda joystktr
-cmp #28
-bne sodown
-rts
-sodown
-lda #216
-sta scrollvalue
-
-jsr addscore
- 
-   
-   lda positionl
- 
-    clc
-    adc #40
-    sta positionl
-    sta positionlbuffer
-    
-    bcs incresehighbyte
- 
-    lda #01
- sta scrolltrigger
  
  
- 
-  
-    rts
-up
-lda joystktr
-cmp #26
-bne soup
-rts
-soup 
-
-lda #40
-sta scrollvalue
-jsr addscore
- 
-  lda positionl
-    sec
-    sbc #40
-    sta positionl
- sta positionlbuffer
-   
- 
- bcc decreasehibyte
- 
-    lda #01
- sta scrolltrigger
-rts
-
- 
-
-decreasehibyte   
- 
-dec positionh
-lda positionh
-cmp #0
-beq inchibyteagain
- 
- 
-rts
-
-
-
-
-incresehighbyte   
-clc
-inc positionh
-
-lda positionh
-cmp #5
-beq dechibyteagain
- 
- 
-rts
-dechibyteagain
- 
-lda #01
-sta positionh
-increaselowbyte
- lda positionl
-adc #23
- sta positionl
- 
-
-
-rts
-
-
-inchibyteagain
-lda #04
-sta positionh
-decreaselowbyte
-
-lda positionl
-sbc #24
-sta positionl
- 
-rts
 
 
 reloadposition
@@ -1139,190 +839,11 @@ bne butterflyloadloop
  
 rts
 
-
-decobjecthibyte
- sec
-lda wallspositionh
-sbc #1
- 
- 
-cmp #00
- beq wallshighresethi
- sta wallspositionh
- 
- 
- rts
-incwallshibyte 
- clc
-lda wallspositionh
-cmp #4
-beq wallshighreset
-inc wallspositionh
- 
- 
-rts 
- 
-
-wallshighreset
-
-ldx #1
-stx wallspositionh
- 
-rts
-wallshighresethi
-lda #4
-sta wallspositionh
- 
-rts 
-collisionforflyingobj
- 
-inx
- 
-lda wallsbuffer,x
- adc scrollvalue
-
-cmp wallpix,x
-
- 
  
 
 
  
- cpx #255
-bne collisionforflyingobj 
 
-rts
-
- 
- 
-
-revlable2
- 
-
-rts
- 
- 
- 
- 
-
- 
-displaywallspg1
- 
-
- 
- 
-
- 
-
-lda wallschar
-sta $0400,y
- 
-lda wallscolour
-sta $d800,y
-  sty reversezp 
-ldy reversezp 
-
- 
- 
- 
- 
-
- lda wallschar
-sta $0500,y
- 
-lda wallscolour
-sta $d900,y
- 
- 
- sty reversezp2
- ldy reversezp2 
- 
- 
- 
- 
- 
-
-lda wallschar
-sta $0600,y
- 
-lda wallscolour
-sta $da00,y
- 
-  sty reversezp3
- ldy reversezp3 
- 
- 
- 
- 
-
-lda wallschar
-sta $0700,y
-
-lda wallscolour
-sta $db00,y
- sty reversezp4
- ldy reversezp4 
-  
-
-rts
-collisioncheck
-lda reversezp
- adc #1
-cmp positionl
-beq noleft2
-collisioncheckup
-lda reversezp2
-adc #40
-cmp positionl
-beq noup2
-collisioncheckdown
-lda reversezp3
-sbc #40
-cmp positionl
-beq nodown2
-collisioncheckright 
- lda reversezp4
- adc #255
-cmp positionl
-beq noright2
-  
-
-rts 
- 
-noleft2
-lda #23
-sta joystktr
-lda #0
-sta scrollvalue
-jsr destroywalls
-rts
- 
-noup2
-lda #26
-sta joystktr
-
-lda #0
-sta scrollvalue
-jsr destroywalls
-rts 
- 
-nodown2
-lda #28
-sta joystktr
-lda #0
-sta scrollvalue
-jsr destroywalls
-rts 
-
- 
-noright2
-lda #48
-sta joystktr
-lda #0
-sta scrollvalue
-
-jsr destroywalls
-rts
 showgameover 
 
 jsr expnoz2
@@ -1573,12 +1094,17 @@ circle7
 circle8 
  !byte %0000000
  
-wallpix !byte 1,2,3,4,5,6,7,8,9,41,42,43,44,45,46,47,48,49,81,82,83,84,85,86,87,88,89,121,122,123,124,125,126,127,128,129,161,162,163,164,165,166,167,168,169,201,202,203,204,205,206,207,208,209 
+wallpix !byte 1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250,1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250
 somenum2
 !byte 15,20,35,40,55,60,75,80,95,100,115,120,135,140,155,160,175,180,195,200,215,220,235,240
-wallsbuffer !byte 1,2,3,4,5,6,7,8,9,10,41,42,43,44,45,46,47,48,49,50,81,82,83,84,85,86,87,88,89,90,121,122,123,124,125,126,127,128,129,130,161,162,163,164,165,166,167,168,169,170,201,202,203,204,205,206,207,208,209,210,241,242,243,244,245,246,247,248,249,250
+
  
+wallsbuffer !byte  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+wallsbuffer2 !byte  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+wallsbuffer3 !byte  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+wallsbuffer4 !byte  0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
  
+
 theship   !byte   %00000001
           !byte   %00000001
           !byte   %00110001
@@ -1770,6 +1296,7 @@ sidebulletchardata
           !byte   %00000000          
 
 
-  !source "two.asm"                  
+  !source "two.asm"    
+    !source "three.asm"  
  !source "sounds.asm"
 
