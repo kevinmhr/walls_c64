@@ -273,7 +273,7 @@ ldy #0
  
 displaywallslp
 
-
+jsr collisionhi 
 backtowherewewere 
  
  lda wallsbuffer,y
@@ -321,7 +321,7 @@ lda wallscolour
 sta $db00,y
 
 
-jsr collisionhi 
+
 
  iny
 cpy #255
