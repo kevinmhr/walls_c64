@@ -5,7 +5,7 @@ fire
  lda bullettrigger
  cmp #0
 
- beq fire2 
+ ;beq fire2 
  rts
 fire2
  
@@ -17,8 +17,7 @@ sta bulletpositionh
  
  
   jsr lazbeep1 
-  
-   
+jsr jump
  
 
 
@@ -31,8 +30,32 @@ sta lastkey
  
 
 rts
+jump 
+
+ldx #0
+lda $dc00
+cmp #$6f
+beq sojump
+jsr down
+rts
+sojump
+ldx #0
+jumplp
+sec
+ 
+lda positionl
 
 
+
+sbc #40
+sta positionl
+bcc decreasehibyte
+sta positionl
+ 
+
+
+
+rts
 
 dojoy
 lda $dc00
@@ -46,8 +69,7 @@ rts
 movejoy 
                 
                 lda lastkey
-                cmp #$6f
-                beq fire
+              
                 cmp #$7b   
 				beq left 
 				cmp #$7e   
@@ -123,6 +145,15 @@ lda joystktr
 cmp #28
 bne sodown
 rts
+decreasehibyte   
+ 
+dec positionh
+lda positionh
+cmp #0
+beq inchibyteagain
+ 
+ 
+rts
 sodown
 lda #216
 sta scrollvalue
@@ -172,15 +203,7 @@ rts
 
  
 
-decreasehibyte   
- 
-dec positionh
-lda positionh
-cmp #0
-beq inchibyteagain
- 
- 
-rts
+
 
 
 
