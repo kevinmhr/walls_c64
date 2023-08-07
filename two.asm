@@ -152,7 +152,11 @@ incroppbulletpositionh2
  
  
 
-
+lda #32
+sta $04ff
+sta $05ff
+sta $06ff
+sta $07ff
 lda opposebulletposh2
 cmp #4
 beq resetopposebulletposh2
@@ -183,12 +187,14 @@ adc #1
  eor #254
 
   tax
+  
  
  stx opposebulletposl2
   bcs incroppbulletpositionh2
  
  stx opposebulletposl2
  
+jsr flightscollision
  
  
 
@@ -219,7 +225,7 @@ rts
 
 displayoppbullet2pg1
 
-lda #87
+lda oppbulletchar
 sta $0400,x
  
 lda opposebulletcolor
@@ -231,7 +237,7 @@ sta $d800,x
 rts
 displayoppbullet2pg2
  
-lda #87
+lda oppbulletchar
 sta $0500,x
  
 lda opposebulletcolor
@@ -243,7 +249,7 @@ displayoppbullet2pg3
  
  
  
-lda #87
+lda oppbulletchar
 
 sta $0600,x
  
@@ -257,7 +263,7 @@ sta $da00,x
 displayoppbullet2pg4
  
 
-lda #87
+lda oppbulletchar
 sta $0700,x
  
  
@@ -488,12 +494,16 @@ rts
 noright2
 lda #48
 sta joystktr
+lda #28
+sta joystktr
 lda #0
 sta scrollvalue
 rts
  
 noleft2
 lda #23
+sta joystktr
+lda #28
 sta joystktr
 lda #0
 sta scrollvalue

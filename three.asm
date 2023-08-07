@@ -92,7 +92,7 @@ rts
 soleft
 lda #1
 sta scrollvalue
-jsr addscore
+ jsr expnoz
    
     lda positionl
     sec
@@ -119,8 +119,8 @@ rts
 soright
 lda #254
 sta scrollvalue
-
-jsr addscore
+jsr expnoz
+ 
  lda positionl
     clc
     adc #01
@@ -156,11 +156,9 @@ beq inchibyteagain
 rts
 sodown
 lda #216
-sta scrollvalue
-
-jsr addscore
  
-   
+ 
+   jsr expnoz
    lda positionl
  
     clc
@@ -186,7 +184,7 @@ soup
 
 lda #40
 sta scrollvalue
-jsr addscore
+ jsr expnoz
  
   lda positionl
     sec
