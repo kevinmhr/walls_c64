@@ -27,7 +27,7 @@ bgcolor =$024
 charactertemporary = $026
 charactercolour = $27
 wallschar = $6677
-wallscolour = $71
+wallscolour = $89
 objectschar2 = $6689
 objectschar3 = $6643
 objectschar4 = $6699
@@ -37,7 +37,7 @@ opposebulletposl = $6249
 opposebulletposl2 = $6252
 opposebulletposh = $6250
 opposebulletposh2 = $6253
-opposebulletcolor = $6254
+opposebulletcolor = $47
 wallspositionh = $29
 wallspositionl = $30
 bulletpositionh = $6848
@@ -49,7 +49,7 @@ scorehunds = $40fd
 scorethous = $40fa 
 bulletcolor = $2055
 shuf = $6c00
-increment = $4a00
+increment = $6896
 currentcell = $03
 scrollvalue = $37
 scrolltrigger = $38
@@ -153,9 +153,11 @@ lda #26
 sta positionl
 ldx #0
 ldy #0
- 
+  
+lda #128
+sta oppbulletchar
 lda #0
-
+ 
 sta $d021
 lda #40
 sta reversetrigger
@@ -174,8 +176,8 @@ lda #80
 sta character3
 lda #0
 sta $d020
-sta opposebulletcolor
- lda #1
+ 
+ lda #2
  sta opposebulletcolor
 lda #03
 sta charactercolour
@@ -324,44 +326,31 @@ cpx #255
  bne loadwallsloop
 ldy #0
 
-
-
-
+ 
+inc increment
+ 
 
 mainloop
-
-
-
-ldx #0 
-wastetime
-;inx
-;ldx #255
-;cpx $d012
- ;bne wastetime
-
-
- 
- 
- ldy #0
+ldx #0
+  ldy #0
  
 jsr jump
  
 lda #1
 sta joystktr 
 
-jsr display
+
  
  ldx #$0
  
    ldy #0
-
+jsr scrolling
  
   
   jsr printscore
    ldy #0
  
- 
- jsr displayoppbullet2
+
  
 
 
@@ -370,25 +359,53 @@ ldy #$0
  
 
  
+  jsr displaywalls
+ jsr display
+
+
+ 
+ jsr displayoppbullet2
+wastetime
+
  
  
 
 
+inc opposebulletcolor
 
 
 
  
-jsr displaywalls
-  
+ 
  jsr dojoy
 jsr movejoy
+
 
 jmp mainloop
 
 rts
+bulletchars 
  
- 
-  
+ldx oppbulletchar
+
+cpx #255
+
+beq bulletcharreset
+ldx opposebulletcolor
+cpx #0
+;beq bulletcolorreset
+
+
+rts
+bulletcharreset
+lda #200
+sta oppbulletchar
+rts
+bulletcolorreset
+lda #3
+sta opposebulletcolor
+rts
+
   
  
  
@@ -969,13 +986,13 @@ jsr loadwalls
 rts
  
 addscore		
-                 
                 
-              inc oppbulletchar
-            inc opposebulletcolor
-           
+                jsr movewalls
+           inc oppbulletchar
+           inc opposebulletcolor
+        inc wallscolour
             inc bgcolor
-              
+              jsr bulletchars
 
                  clc
 			    lda #0
@@ -1045,24 +1062,24 @@ printscore
 				lda scoreones
 				adc #$30
 				
-				sta $0408
+				sta $07e3
 				lda #1
-				sta $d808
+				sta $dbe3
 				lda scoretens
 				adc #$30
-				sta $0407
-			lda #1
-				sta $d807
+				sta $07e2
+			lda #2
+				sta $dbe2
 				lda scorehunds
 				adc #$30
-				sta $0406
-			lda #1
-				sta $d806
+				sta $07e1
+			lda #3
+				sta $dbe1
 				lda scorethous
 				adc #$30
-				sta $0405
-				lda #1
-				sta $d805	
+				sta $07e0
+				lda #4
+				sta $dbe0	
 				rts
  
 somenum

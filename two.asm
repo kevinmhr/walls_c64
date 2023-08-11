@@ -273,14 +273,59 @@ sta $db00,x
  
  rts
  
+movewalls
+ldx #0
+ 
+ldy #0
+backtowherewewere 
+ iny
+ 
+ lda wallsbuffer,x
+ iny
+ 
+ sta wallsbuffer,y
+ 
+ 
+ 
+ lda wallsbuffer2,x
+ iny
+ 
+ sta wallsbuffer2,y
+ 
+ lda wallsbuffer3,x
+ iny
+ 
+ 
+ 
+ sta wallsbuffer3,y
+ 
+ 
+ 
+ 
+ lda wallsbuffer4,x
+ 
+ iny
+ 
+ sta wallsbuffer4,y
+inx
+ 
+ cpx #255
+bne backtowherewewere
+ 
+
+rts
+
+
 displaywalls
 ldx #0
 ldy #0
  
+ldx #0
+ldy #0
 displaywallslp
 
-jsr collisionhi 
-backtowherewewere 
+
+ 
  
  lda wallsbuffer,y
 
@@ -328,16 +373,20 @@ sta $db00,y
 
 
 
-
+ jsr collisionhi 
  iny
 cpy #255
 
 
-bne displaywallslp
+bne displaywallslp 
 
 
  
  rts
+ 
+displaywallslpjmp
+jsr displaywallslp
+rts
 collisionhi
 lda positionh
 cmp #1
@@ -516,7 +565,19 @@ lda #0
 sta scrollvalue
 rts 
 
+correctwalls
+ldx #0
+correctwallslp
+lda #32
+sta wallsbuffer,x
+sta wallsbuffer2,x
+sta wallsbuffer3,x
+sta wallsbuffer4,x
+inx
+cpx #40
+bne correctwallslp
 
+rts
 
  
 
