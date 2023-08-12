@@ -274,40 +274,52 @@ sta $db00,x
  rts
  
 movewalls
-ldx #0
+ldx #60
+ ldy increment
  
-ldy #0
+ 
 backtowherewewere 
- iny
  
- lda wallsbuffer,x
- iny
+ lda wallpix,y
  
  sta wallsbuffer,y
  
- 
- 
- lda wallsbuffer2,x
+ lda wallsbuffer,y
  iny
+ sta wallsbuffer,x
+  
+ lda wallpix2,y
  
  sta wallsbuffer2,y
  
- lda wallsbuffer3,x
- iny
+ lda wallsbuffer2,y
+iny
+ sta wallsbuffer2,x
  
- 
+  
+ lda wallpix3,y
  
  sta wallsbuffer3,y
  
- 
- 
- 
- lda wallsbuffer4,x
- 
+ lda wallsbuffer3,y
  iny
+ sta wallsbuffer3,x
+  
+ lda wallpix4,y
  
  sta wallsbuffer4,y
-inx
+ 
+ lda wallsbuffer4,y
+iny
+ sta wallsbuffer4,x
+ 
+ 
+ 
+ 
+ 
+ 
+
+ inx
  
  cpx #255
 bne backtowherewewere
@@ -383,6 +395,50 @@ bne displaywallslp
 
  
  rts
+maskingnoncollidablebits
+ldx #0
+maskingnoncollidablebitslp
+lda #32
+sta wallsbuffer,x
+sta wallsbuffer2,x
+sta wallsbuffer3,x
+sta wallsbuffer4,x
+inx
+cpx #60
+bne maskingnoncollidablebitslp
+ldx #200
+maskingnoncollidablebitslp2
+lda #32
+sta wallsbuffer,x
+sta wallsbuffer2,x
+sta wallsbuffer3,x
+sta wallsbuffer4,x
+inx
+cpx #255
+bne maskingnoncollidablebitslp2
+
+
+
+
+
+rts
+showingbits
+ldy #0
+ldx #0
+showingbitslp
+lda #34
+sta wallsbuffer,x
+lda #35
+sta wallsbuffer2,x
+lda #36
+sta wallsbuffer3,x
+lda #37
+sta wallsbuffer4,x
+inx
+cpx #255
+bne showingbitslp
+rts
+
  
 displaywallslpjmp
 jsr displaywallslp
@@ -416,6 +472,19 @@ rts
  
 collidepage2
 lda positionl
+sbc #40
+tax
+ 
+lda wallsbuffer2,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer2,x
+cmp #32
+beq jsnodown
+lda positionl
 sbc #1
 tax
 lda wallsbuffer2,x
@@ -427,21 +496,25 @@ tax
 lda wallsbuffer2,x
 cmp #76
 beq jsnoright
-lda positionl
-sbc #39
-tax
-lda wallsbuffer2,x
-cmp #76
-beq jsnoup
-lda positionl
-adc #40
-tax
-lda wallsbuffer2,x
-cmp #76
-beq jsnodown
+
+
 rts 
 collidepage4
 lda positionl
+sbc #40
+tax
+ 
+lda wallsbuffer4,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer4,x
+cmp #32
+beq jsnodown
+
+lda positionl
 sbc #1
 tax
 lda wallsbuffer4,x
@@ -453,18 +526,8 @@ tax
 lda wallsbuffer4,x
 cmp #76
 beq jsnoright
-lda positionl
-sbc #39
-tax
-lda wallsbuffer4,x
-cmp #76
-beq jsnoup
-lda positionl
-adc #40
-tax
-lda wallsbuffer4,x
-cmp #76
-beq jsnodown
+
+
 rts
 jsnoleft
 jsr noleft2
@@ -481,6 +544,20 @@ rts
 
 collidepage3
 lda positionl
+sbc #40
+tax
+ 
+lda wallsbuffer3,x
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer3,x
+cmp #32
+beq jsnodown
+
+lda positionl
 sbc #1
 tax
 lda wallsbuffer3,x
@@ -492,21 +569,26 @@ tax
 lda wallsbuffer3,x
 cmp #76
 beq jsnoright
-lda positionl
-sbc #39
-tax
-lda wallsbuffer3,x
-cmp #76
-beq jsnoup
-lda positionl
-adc #40
-tax
-lda wallsbuffer3,x
-cmp #76
-beq jsnodown
+
+
 rts
 collidepage1
 lda positionl
+sbc #40
+tax
+ 
+lda wallsbuffer,x
+
+cmp #76
+beq jsnoup
+lda positionl
+adc #40
+tax
+lda wallsbuffer,x
+cmp #32
+beq jsnodown
+
+lda positionl
 sbc #1
 tax
 lda wallsbuffer,x
@@ -518,24 +600,14 @@ tax
 lda wallsbuffer,x
 cmp #76
 beq jsnoright
-lda positionl
-sbc #39
-tax
-lda wallsbuffer,x
-cmp #76
-beq jsnoup
-lda positionl
-adc #40
-tax
-lda wallsbuffer,x
-cmp #76
-beq jsnodown
+
+
 rts
  
  
 nodown2
-lda #28
-sta joystktr
+lda #5
+sta joystktd
 lda #0
 sta scrollvalue
 rts 
@@ -543,24 +615,22 @@ rts
 noright2
 lda #48
 sta joystktr
-lda #28
-sta joystktr
+ 
 lda #0
 sta scrollvalue
 rts
  
 noleft2
 lda #23
-sta joystktr
-lda #28
-sta joystktr
+sta joystktl
+ 
 lda #0
 sta scrollvalue
 rts
  
 noup2
 lda #26
-sta joystktr
+sta joystktu
 lda #0
 sta scrollvalue
 rts 

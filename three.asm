@@ -33,7 +33,7 @@ rts
 jump 
 
 ldx #0
-lda $dc00
+lda lastkey
 cmp #$6f
 beq sojump
 jsr down
@@ -41,16 +41,9 @@ rts
 sojump
 ldx #0
 jumplp
-sec
  
-lda positionl
-
-
-
-sbc #40
-sta positionl
-bcc decreasehibyte
-sta positionl
+ 
+jsr up
  
 
 
@@ -68,26 +61,31 @@ rts
 
 movejoy 
                 
+                
+                
+
                 lda lastkey
               
                 cmp #$7b   
 				beq left 
 				cmp #$7e   
-				beq up
+				beq jmptoup
 				cmp #$77    
 				beq right
-				cmp #$7d   
-				beq down
+				;cmp #$7d   
+				
                
 				rts
 				
  
-
+jmptoup
+jsr up
+rts
 left 
   
-lda joystktr
-cmp #23
-bne soleft
+lda joystktl
+cmp #28
+beq soleft
 rts
 soleft
 lda #1
@@ -113,8 +111,8 @@ sta positionl
 rts
 right 
 lda joystktr
-cmp #48
-bne soright
+cmp #28
+beq soright
 rts
 soright
 lda #254
@@ -140,10 +138,10 @@ sta positionl
 rts
 
 down
-
-lda joystktr
+lda joystktd
 cmp #28
 bne sodown
+ 
 rts
 decreasehibyte   
  
@@ -151,8 +149,7 @@ dec positionh
 lda positionh
 cmp #0
 beq inchibyteagain
- 
- 
+out
 rts
 sodown
 lda #216
@@ -176,7 +173,7 @@ lda #216
   
     rts
 up
-lda joystktr
+lda joystktu
 cmp #26
 bne soup
 rts
