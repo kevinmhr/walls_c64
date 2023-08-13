@@ -72,7 +72,8 @@ movejoy
 				beq jmptoup
 				cmp #$77    
 				beq right
-				;cmp #$7d   
+				cmp #$7d   
+				beq sodown
 				
                
 				rts

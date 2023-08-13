@@ -338,6 +338,8 @@ displaywallslp
 
 
  
+lda #0
+sta lookoutbit
  
  lda wallsbuffer,y
 
@@ -386,6 +388,9 @@ sta $db00,y
 
 
  jsr collisionhi 
+ 
+  jsr collisioncomplexcheck
+    jsr collisioncomplexcheck2
  iny
 cpy #255
 
@@ -444,6 +449,16 @@ displaywallslpjmp
 jsr displaywallslp
 rts
 collisionhi
+ 
+lda #28
+sta joystktr 
+lda #28
+sta joystktd 
+lda #28
+sta joystktl
+ lda #28
+sta joystktu
+
 lda positionh
 cmp #1
  beq collidepage1br
@@ -484,15 +499,21 @@ tax
 lda wallsbuffer2,x
 cmp #32
 beq jsnodown
+
+recheckleft2
 lda positionl
 sbc #1
 tax
 lda wallsbuffer2,x
 cmp #76
 beq jsnoleft
+recheckright2
+clc
 lda positionl
 adc #1
+adc lookoutbit
 tax
+
 lda wallsbuffer2,x
 cmp #76
 beq jsnoright
@@ -513,15 +534,19 @@ tax
 lda wallsbuffer4,x
 cmp #32
 beq jsnodown
-
+recheckleft4
 lda positionl
 sbc #1
 tax
 lda wallsbuffer4,x
 cmp #76
 beq jsnoleft
+recheckright4
+clc
 lda positionl
+
 adc #1
+adc lookoutbit
 tax
 lda wallsbuffer4,x
 cmp #76
@@ -548,25 +573,39 @@ sbc #40
 tax
  
 lda wallsbuffer3,x
+ 
+
 cmp #76
 beq jsnoup
 lda positionl
 adc #40
 tax
+ 
 lda wallsbuffer3,x
+ 
+
 cmp #32
 beq jsnodown
-
+recheckleft3
 lda positionl
 sbc #1
 tax
+ 
 lda wallsbuffer3,x
+ 
+
 cmp #76
 beq jsnoleft
+recheckright3
+clc
 lda positionl
 adc #1
+adc lookoutbit
 tax
+ 
 lda wallsbuffer3,x
+ 
+
 cmp #76
 beq jsnoright
 
@@ -587,45 +626,137 @@ tax
 lda wallsbuffer,x
 cmp #32
 beq jsnodown
-
+recheckleft1
 lda positionl
 sbc #1
 tax
 lda wallsbuffer,x
 cmp #76
 beq jsnoleft
+recheckright1
+clc
 lda positionl
 adc #1
+adc lookoutbit
 tax
+
 lda wallsbuffer,x
 cmp #76
 beq jsnoright
 
 
 rts
+collisioncomplexcheck2
+lda joystktu
+cmp #26
+beq checkright
+rts
+checkright
+lda joystktr
+cmp #28
+beq checkleft
+
+
+rts
+checkleft
+lda joystktl
+cmp #23
+beq dothetrick
+rts
+
+lda joystktd
+cmp #28
+beq dothetrick
+
+collisioncomplexcheck
+lda joystktu
+cmp #26
+beq checkdown
+
+lda joystktl
+cmp #23
+beq checkdown
+rts
+checkdown
+lda joystktd
+cmp #28
+beq dothetrick2
+
+rts
+
+dothetrick2
  
+
+lda #0
+sta lookoutbit
+lda positionh
+cmp #1
+beq recheckright1
+lda positionh
+cmp #2
+beq jmprecheckright2
+lda positionh
+cmp #3
+beq jmprecheckright3
+lda positionh
+cmp #4
+beq jmprecheckright4
+rts 
+jmprecheckright2
+jsr recheckright2
+rts
+jmprecheckright4
+jsr recheckright4
+rts
+jmprecheckright3
+jsr recheckright3
+rts
+
+dothetrick
  
+
+lda #0
+sta lookoutbit
+lda positionh
+cmp #1
+beq recheckleft1
+lda positionh
+cmp #2
+beq jmprecheckleft2
+lda positionh
+cmp #3
+beq jmprecheckleft3
+lda positionh
+cmp #4
+beq jmprecheckleft4
+rts 
+jmprecheckleft2
+jsr recheckleft2
+rts
+jmprecheckleft4
+jsr recheckleft4
+rts
+jmprecheckleft3
+jsr recheckleft3
+rts
 nodown2
 lda #5
 sta joystktd
-lda #0
-sta scrollvalue
+
 rts 
 
 noright2
 lda #48
 sta joystktr
  
-lda #0
-sta scrollvalue
+ 
 rts
  
 noleft2
 lda #23
 sta joystktl
  
-lda #0
-sta scrollvalue
+ 
 rts
  
 noup2

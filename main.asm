@@ -66,6 +66,7 @@ joystktr= $45
 joystktl= $41
 joystktd= $40
 joystktu= $55
+lookoutbit = $77
  
 *=$0801
         !byte    $1E, $08, $0A, $00, $9E, $20, $28,  $32, $30, $38, $30, $29, $3a, $8f, $20, $28, $43, $29, $20, $32, $30, $32, $31, $20, $4D, $54, $53, $56, $00, $00, $00
@@ -336,15 +337,7 @@ mainloop
 ldx #0
   ldy #0
 
- 
-lda #28
-sta joystktr 
-lda #28
-sta joystktd 
-lda #28
-sta joystktl
- lda #28
-sta joystktu
+
  ldx #$0
  
    ldy #0
@@ -354,7 +347,6 @@ jsr scrolling
   jsr printscore
    ldy #0
  
-
 
 
 
@@ -383,14 +375,16 @@ inc opposebulletcolor
 
 
  
- 
+ jsr jump
  jsr dojoy
 jsr movejoy
-jsr jump
+
 
 jmp mainloop
 
 rts
+
+
 bulletchars 
  
 ldx oppbulletchar
