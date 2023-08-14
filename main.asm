@@ -67,7 +67,7 @@ joystktl= $41
 joystktd= $40
 joystktu= $55
 lookoutbit = $77
- 
+colorshadow = $78
 *=$0801
         !byte    $1E, $08, $0A, $00, $9E, $20, $28,  $32, $30, $38, $30, $29, $3a, $8f, $20, $28, $43, $29, $20, $32, $30, $32, $31, $20, $4D, $54, $53, $56, $00, $00, $00
  
@@ -336,7 +336,7 @@ ldy #0
 mainloop
 ldx #0
   ldy #0
-
+  
 
  ldx #$0
  
@@ -352,7 +352,7 @@ jsr scrolling
 
  ldx #0
 ldy #$0
- 
+
  jsr maskingnoncollidablebits
  
   jsr displaywalls
@@ -987,9 +987,9 @@ jsr loadwalls
 rts
  
 addscore		
-                
+     
                 jsr movewalls
-                
+               
            inc oppbulletchar
            inc opposebulletcolor
         inc wallscolour

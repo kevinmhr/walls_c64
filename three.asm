@@ -63,6 +63,9 @@ movejoy
                 
                 
                 
+ jsr collisioncomplexcheck3
+  jsr collisioncomplexcheck
+    jsr collisioncomplexcheck2
 
                 lda lastkey
               
@@ -73,7 +76,7 @@ movejoy
 				cmp #$77    
 				beq right
 				cmp #$7d   
-				beq sodown
+				beq down
 				
                
 				rts

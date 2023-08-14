@@ -274,12 +274,12 @@ sta $db00,x
  rts
  
 movewalls
-ldx #60
+ldx #40
  ldy increment
  
  
 backtowherewewere 
- 
+ inc increment
  lda wallpix,y
  
  sta wallsbuffer,y
@@ -336,7 +336,7 @@ ldx #0
 ldy #0
 displaywallslp
 
-
+inc colorshadow
  
 lda #0
 sta lookoutbit
@@ -388,18 +388,16 @@ sta $db00,y
 
 
  jsr collisionhi 
- 
-  jsr collisioncomplexcheck
-    jsr collisioncomplexcheck2
+
  iny
 cpy #255
 
 
 bne displaywallslp 
 
-
  
  rts
+ 
 maskingnoncollidablebits
 ldx #0
 maskingnoncollidablebitslp
@@ -411,7 +409,7 @@ sta wallsbuffer4,x
 inx
 cpx #60
 bne maskingnoncollidablebitslp
-ldx #200
+ldx #210
 maskingnoncollidablebitslp2
 lda #32
 sta wallsbuffer,x
@@ -421,6 +419,7 @@ sta wallsbuffer4,x
 inx
 cpx #255
 bne maskingnoncollidablebitslp2
+
 
 
 
@@ -489,13 +488,17 @@ collidepage2
 lda positionl
 sbc #40
 tax
- 
+ lda colorshadow
+sta $d900,x
 lda wallsbuffer2,x
 cmp #76
-beq jsnoup
+beq jsnoup2
+recheckdown2
 lda positionl
 adc #40
 tax
+lda colorshadow
+sta $d900,x
 lda wallsbuffer2,x
 cmp #32
 beq jsnodown
@@ -504,6 +507,8 @@ recheckleft2
 lda positionl
 sbc #1
 tax
+lda colorshadow
+sta $d900,x
 lda wallsbuffer2,x
 cmp #76
 beq jsnoleft
@@ -513,24 +518,34 @@ lda positionl
 adc #1
 adc lookoutbit
 tax
-
+lda colorshadow
+sta $d900,x
 lda wallsbuffer2,x
 cmp #76
 beq jsnoright
 
 
 rts 
+
+jsnoup2
+jsr noup2
+rts
 collidepage4
 lda positionl
 sbc #40
 tax
- 
+ lda colorshadow
+sta $db00,x
 lda wallsbuffer4,x
 cmp #76
 beq jsnoup
+recheckdown4
+
 lda positionl
 adc #40
 tax
+ lda colorshadow
+sta $db00,x
 lda wallsbuffer4,x
 cmp #32
 beq jsnodown
@@ -538,6 +553,8 @@ recheckleft4
 lda positionl
 sbc #1
 tax
+ lda colorshadow
+sta $db00,x
 lda wallsbuffer4,x
 cmp #76
 beq jsnoleft
@@ -571,16 +588,20 @@ collidepage3
 lda positionl
 sbc #40
 tax
- 
+  lda colorshadow
+sta $da00,x
 lda wallsbuffer3,x
  
 
 cmp #76
 beq jsnoup
+recheckdown3
+
 lda positionl
 adc #40
 tax
- 
+   lda colorshadow
+sta $da00,x
 lda wallsbuffer3,x
  
 
@@ -590,7 +611,8 @@ recheckleft3
 lda positionl
 sbc #1
 tax
- 
+   lda colorshadow
+sta $da00,x
 lda wallsbuffer3,x
  
 
@@ -602,7 +624,8 @@ lda positionl
 adc #1
 adc lookoutbit
 tax
- 
+   lda colorshadow
+sta $da00,x
 lda wallsbuffer3,x
  
 
@@ -615,14 +638,19 @@ collidepage1
 lda positionl
 sbc #40
 tax
- 
+   lda colorshadow
+sta $d800,x
 lda wallsbuffer,x
 
 cmp #76
 beq jsnoup
+
+recheckdown1
 lda positionl
 adc #40
 tax
+   lda colorshadow
+sta $d800,x
 lda wallsbuffer,x
 cmp #32
 beq jsnodown
@@ -630,22 +658,39 @@ recheckleft1
 lda positionl
 sbc #1
 tax
+   lda colorshadow
+sta $d800,x
 lda wallsbuffer,x
 cmp #76
-beq jsnoleft
+beq jsnoleft2
 recheckright1
 clc
 lda positionl
 adc #1
 adc lookoutbit
 tax
-
+   lda colorshadow
+sta $d800,x
 lda wallsbuffer,x
 cmp #76
-beq jsnoright
+beq jsnoright2
 
 
 rts
+jsnoleft2
+jsr noleft2
+rts
+jsnoright2
+jsr noright2
+rts
+
+
+collisioncomplexcheck3
+lda joystktd
+cmp #28
+beq checkleft2
+rts
+ 
 collisioncomplexcheck2
 lda joystktu
 cmp #26
@@ -659,9 +704,34 @@ beq checkleft
 
 rts
 checkleft
+lda joystktd
+cmp #28
+beq jmpdothetrick3
+
 lda joystktl
 cmp #23
 beq dothetrick
+
+rts
+jmpdothetrick3
+jsr dothetrick3
+rts
+checkleft2
+
+lda joystktu
+cmp #26
+beq dothetrick2
+lda joystktl
+cmp #23
+beq dothetrick2
+
+
+
+rts
+checkdown2
+lda joystktd
+cmp #28
+beq dothetrick3
 rts
 
 lda joystktd
@@ -678,9 +748,10 @@ cmp #23
 beq checkdown
 rts
 checkdown
+
 lda joystktd
 cmp #28
-beq dothetrick2
+beq dothetrick
 
 rts
 
@@ -719,7 +790,7 @@ lda #0
 sta lookoutbit
 lda positionh
 cmp #1
-beq recheckleft1
+beq jmprecheckleft1
 lda positionh
 cmp #2
 beq jmprecheckleft2
@@ -730,6 +801,9 @@ lda positionh
 cmp #4
 beq jmprecheckleft4
 rts 
+jmprecheckleft1
+jsr recheckleft1
+rts
 jmprecheckleft2
 jsr recheckleft2
 rts
@@ -739,6 +813,40 @@ rts
 jmprecheckleft3
 jsr recheckleft3
 rts
+
+dothetrick3
+ 
+
+lda #0
+sta lookoutbit
+lda positionh
+cmp #1
+beq jmprecheckdown1
+lda positionh
+cmp #2
+beq jmprecheckdown2
+lda positionh
+cmp #3
+beq jmprecheckdown3
+lda positionh
+cmp #4
+beq jmprecheckdown4
+rts 
+jmprecheckdown1
+jsr recheckdown1
+rts
+jmprecheckdown2
+jsr recheckdown2
+rts
+jmprecheckdown4
+jsr recheckdown4
+rts
+jmprecheckdown3
+jsr recheckdown3
+rts
+
+
+
 nodown2
 lda #5
 sta joystktd
