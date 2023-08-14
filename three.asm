@@ -61,7 +61,7 @@ rts
 
 movejoy 
                 
-                
+                 jsr collisionhi 
                 
  jsr collisioncomplexcheck3
   jsr collisioncomplexcheck

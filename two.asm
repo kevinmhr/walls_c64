@@ -274,12 +274,12 @@ sta $db00,x
  rts
  
 movewalls
-ldx #40
- ldy increment
+ldy #00
+ ldx increment
  
  
 backtowherewewere 
- inc increment
+ iny
  lda wallpix,y
  
  sta wallsbuffer,y
@@ -387,7 +387,7 @@ sta $db00,y
 
 
 
- jsr collisionhi 
+
 
  iny
 cpy #255
@@ -426,6 +426,8 @@ bne maskingnoncollidablebitslp2
 
 
 rts
+
+
 showingbits
 ldy #0
 ldx #0
@@ -485,8 +487,9 @@ collidepage4br
 rts
  
 collidepage2
+clc
 lda positionl
-sbc #40
+sbc #39
 tax
  lda colorshadow
 sta $d900,x
@@ -494,6 +497,7 @@ lda wallsbuffer2,x
 cmp #76
 beq jsnoup2
 recheckdown2
+clc
 lda positionl
 adc #40
 tax
@@ -504,8 +508,9 @@ cmp #32
 beq jsnodown
 
 recheckleft2
+clc
 lda positionl
-sbc #1
+sbc #0
 tax
 lda colorshadow
 sta $d900,x
@@ -531,8 +536,9 @@ jsnoup2
 jsr noup2
 rts
 collidepage4
+clc
 lda positionl
-sbc #40
+sbc #39
 tax
  lda colorshadow
 sta $db00,x
@@ -541,6 +547,7 @@ cmp #76
 beq jsnoup
 recheckdown4
 
+clc
 lda positionl
 adc #40
 tax
@@ -550,8 +557,9 @@ lda wallsbuffer4,x
 cmp #32
 beq jsnodown
 recheckleft4
+clc
 lda positionl
-sbc #1
+sbc #0
 tax
  lda colorshadow
 sta $db00,x
@@ -585,8 +593,9 @@ jsr nodown2
 rts
 
 collidepage3
+clc
 lda positionl
-sbc #40
+sbc #39
 tax
   lda colorshadow
 sta $da00,x
@@ -596,7 +605,7 @@ lda wallsbuffer3,x
 cmp #76
 beq jsnoup
 recheckdown3
-
+clc
 lda positionl
 adc #40
 tax
@@ -608,8 +617,9 @@ lda wallsbuffer3,x
 cmp #32
 beq jsnodown
 recheckleft3
+clc
 lda positionl
-sbc #1
+sbc #0
 tax
    lda colorshadow
 sta $da00,x
@@ -635,8 +645,9 @@ beq jsnoright
 
 rts
 collidepage1
+clc
 lda positionl
-sbc #40
+sbc #39
 tax
    lda colorshadow
 sta $d800,x
@@ -646,6 +657,7 @@ cmp #76
 beq jsnoup
 
 recheckdown1
+clc
 lda positionl
 adc #40
 tax
@@ -655,8 +667,9 @@ lda wallsbuffer,x
 cmp #32
 beq jsnodown
 recheckleft1
+clc
 lda positionl
-sbc #1
+sbc #0
 tax
    lda colorshadow
 sta $d800,x
@@ -700,7 +713,7 @@ checkright
 lda joystktr
 cmp #28
 beq checkleft
-
+jsr dothetrick3
 
 rts
 checkleft
