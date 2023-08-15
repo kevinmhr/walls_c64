@@ -302,9 +302,7 @@ jsr scrolling
  ldx #0
 ldy #$0
 
- jsr maskingnoncollidablebits
- 
-  jsr displaywalls
+
 ;  jsr showingbits
 
 
@@ -322,9 +320,10 @@ wastetime
 inc opposebulletcolor
 
 
-
+ jsr maskingnoncollidablebits
  
- jsr jump
+  jsr displaywalls
+ 
  jsr dojoy
 jsr movejoy
 
@@ -937,7 +936,7 @@ rts
  
 addscore		
      
-               jsr changeblockcharacter
+             jsr changeblockcharacter
               
                jsr movewalls
                

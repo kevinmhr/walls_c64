@@ -687,20 +687,52 @@ sta $d800,x
 lda wallsbuffer,x
 cmp #76
 beq jsnoright2
-
-
+ 
 rts
+checkleftagain1
+
 jsnoleft2
 jsr noleft2
 rts
 jsnoright2
 jsr noright2
 rts
-
-
+collisioncomplexcheck6
+lda joystktu
+cmp #26
+beq jmpdothetrick3
+rts
+collisioncomplexcheck5
+lda joystktl
+cmp #23
+beq  dothetrick2 
+rts
+collisioncomplexcheck4
+lda joystktd
+cmp #5
+beq jmpdothetrick
+rts
+checkleft3
+lda joystktl
+cmp #28
+beq checkright3
+rts
+checkright3
+lda joystktr
+cmp #28
+beq checkup3
+rts
+checkup3
+lda joystktu
+cmp #28
+beq jmpdothetrick 
+rts
+jmpdothetrick 
+jsr dothetrick
+rts
 collisioncomplexcheck3
 lda joystktd
-cmp #28
+cmp #5
 beq checkleft2
 rts
  
@@ -708,12 +740,13 @@ collisioncomplexcheck2
 lda joystktu
 cmp #26
 beq checkright
+
 rts
 checkright
 lda joystktr
 cmp #28
 beq checkleft
-jsr dothetrick3
+ 
 
 rts
 checkleft
@@ -775,7 +808,7 @@ lda #0
 sta lookoutbit
 lda positionh
 cmp #1
-beq recheckright1
+beq jmprecheckright1
 lda positionh
 cmp #2
 beq jmprecheckright2
@@ -786,6 +819,9 @@ lda positionh
 cmp #4
 beq jmprecheckright4
 rts 
+jmprecheckright1
+jsr recheckright1
+rts
 jmprecheckright2
 jsr recheckright2
 rts

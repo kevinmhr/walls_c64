@@ -17,7 +17,6 @@ sta bulletpositionh
  
  
   jsr lazbeep1 
-jsr jump
  
 
 
@@ -30,25 +29,7 @@ sta lastkey
  
 
 rts
-jump 
-
-ldx #0
-lda lastkey
-cmp #$6f
-beq sojump
-jsr down
-rts
-sojump
-ldx #0
-jumplp
  
- 
-jsr up
- 
-
-
-
-rts
 
 dojoy
 lda $dc00
@@ -62,11 +43,14 @@ rts
 movejoy 
                 
                  jsr collisionhi 
-                
- jsr collisioncomplexcheck3
+         
+ 
   jsr collisioncomplexcheck
     jsr collisioncomplexcheck2
-
+    jsr collisioncomplexcheck3
+    jsr collisioncomplexcheck4  
+  jsr collisioncomplexcheck5
+    jsr collisioncomplexcheck6
                 lda lastkey
               
                 cmp #$7b   
@@ -77,7 +61,8 @@ movejoy
 				beq right
 				cmp #$7d   
 				beq down
-				
+				cmp #$6f
+                beq up
                
 				rts
 				
