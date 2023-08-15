@@ -274,8 +274,8 @@ sta $db00,x
  rts
  
 movewalls
-ldy #00
- ldx increment
+ldy increment
+ ldx #40
  
  
 backtowherewewere 
@@ -316,7 +316,7 @@ iny
  
  
  
- 
+ iny
  
 
  inx

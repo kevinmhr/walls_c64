@@ -241,3 +241,20 @@ sbc #24
 sta positionl
  
 rts
+ 
+changeblockcharacter
+ldy #0
+inc increment2
+ldx increment2
+changeblockcharacterlp
+txa
+ror
+
+ 
+sta $2260 ,y
+iny
+cpy #8
+bne changeblockcharacterlp
+
+rts
+
