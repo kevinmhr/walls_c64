@@ -33,16 +33,23 @@ rts
 
 dojoy
 lda $dc00
-
 sta lastkey
 rts
+ 
 
 
-
+jmptoup
+jsr up
+jsr up
+rts
+ 
+jmpdecreasehibyte
+jsr decreasehibyte
+rts
 
 movejoy 
                 
-                 jsr collisionhi 
+                 jsr collisionhi
          
  
   jsr collisioncomplexcheck
@@ -62,13 +69,12 @@ movejoy
 				cmp #$7d   
 				beq down
 				cmp #$6f
-                beq up
-               
+                beq jmptoup
+              
 				rts
 				
  
-jmptoup
-jsr up
+
 rts
 left 
   
@@ -175,6 +181,7 @@ sta scrollvalue
   lda positionl
     sec
     sbc #40
+    
     sta positionl
  sta positionlbuffer
    

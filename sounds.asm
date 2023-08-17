@@ -89,17 +89,16 @@ lazbeep1
          jsr soundend1
          lda #%00000011 ; 0 9
          sta attdec
-         lda #%00001000 ; 0 0
+         lda #%00001110 ; 0 0
          sta susrel
          lda #15        ; 15
          sta volume
 shootsnd          
-          ldx #0
-          inx
+          lda opposebulletposl
           
             ; 12
-         stx hifreq
-          lda #128
+         sta hifreq
+          lda #80
          sta lofreq
          lda #%00010000       ; 32 saw
          sta wavefm
@@ -114,7 +113,7 @@ lazbeep2
          jsr soundend2
          lda #%00001001 ; 0 9
          sta attdec
-         lda #%00000000 ; 0 0
+         lda #%00010000 ; 0 0
          sta susrel
          lda #15        ; 15
          sta volume
@@ -122,7 +121,7 @@ lazbeep2
          sta hifreq
          lda #100         ; 9 bit higher
          sta lofreq
-         lda #128      ; 32 saw
+         lda #%00010000        ; 32 saw
          sta wavefm
 
          jsr soundgo2
@@ -158,7 +157,7 @@ expnoz
          sta susrel
          lda #15        ; 15
          sta volume
-         lda voicefreq; 1
+         lda increment 
          sta hifreq
          lda  voicefreq   ; 16
          sta lofreq

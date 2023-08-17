@@ -244,10 +244,26 @@ lda $dc00
 cmp #$6f
 bne startscreen
 cmp #$6f
-beq loadwalls
+beq copyboxcharacter 
 rts
 
+copyboxcharacter 
+ldy #0
+copyboxcharacterloop
+lda bulletchardata,y
+sta $22a8,y
+
  
+lda bulletchardata,y
+sta $22a8,y
+lda oppbulletchardata,y
+sta $22b0,y
+lda sidebulletchardata,y
+sta $22b8,y
+iny
+cpy #8
+ 
+bne copyboxcharacterloop
 
 loadwalls
           
@@ -1218,14 +1234,14 @@ oppbulletchardata
           !byte   %00111000
           
 sidebulletchardata              
-          !byte   %00011000
-          !byte   %00011000
           !byte   %00111100
+          !byte   %01111110
+          !byte   %11000011
           !byte   %11111111
-          !byte   %00111100
-          !byte   %00011000
-          !byte   %00000000
-          !byte   %00000000          
+          !byte   %11111111
+          !byte   %11111111
+          !byte   %01111110
+          !byte   %00111100          
 
 
   !source "two.asm"    

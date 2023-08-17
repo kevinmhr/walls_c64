@@ -897,6 +897,7 @@ rts
 
 
 nodown2
+ jsr  sodown
 lda #5
 sta joystktd
 
