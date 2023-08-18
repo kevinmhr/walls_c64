@@ -201,6 +201,8 @@ rts
 
 incresehighbyte   
 clc
+
+
 inc positionh
 
 lda positionh
@@ -210,7 +212,7 @@ beq dechibyteagain
  
 rts
 dechibyteagain
- 
+ jsr movewalls
 lda #01
 sta positionh
 increaselowbyte
@@ -224,6 +226,7 @@ rts
 
 
 inchibyteagain
+ 
 lda #04
 sta positionh
 decreaselowbyte

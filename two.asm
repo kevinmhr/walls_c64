@@ -407,9 +407,9 @@ sta wallsbuffer2,x
 sta wallsbuffer3,x
 sta wallsbuffer4,x
 inx
-cpx #60
+cpx #40
 bne maskingnoncollidablebitslp
-ldx #210
+ldx #215
 maskingnoncollidablebitslp2
 lda #32
 sta wallsbuffer,x
