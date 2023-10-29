@@ -39,8 +39,14 @@ rts
 
 
 jmptoup
-jsr up
-jsr up
+ jsr soup
+lda $d012
+cmp #10
+beq donejump
+jsr soup
+
+donejump
+
 rts
  
 jmpdecreasehibyte
@@ -140,10 +146,11 @@ bne sodown
 rts
 decreasehibyte   
  
-dec positionh
+
 lda positionh
 cmp #0
 beq inchibyteagain
+dec positionh
 out
 rts
 sodown
@@ -170,7 +177,7 @@ lda #216
 up
 lda joystktu
 cmp #26
-bne soup
+jsr soup
 rts
 soup 
 
@@ -192,7 +199,9 @@ sta scrollvalue
  sta scrolltrigger
 rts
 
- 
+jsrshowgameover
+;jsr showgameover
+rts
 
 
 
@@ -232,8 +241,8 @@ sta positionh
 decreaselowbyte
 
 lda positionl
-sbc #24
-sta positionl
+sbc #20
+ sta positionl
  
 rts
  

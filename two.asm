@@ -91,39 +91,33 @@ ldx #$0
 ldy #0
 
 displayloop
-clc
+ 
+ clc
+
 lda positionh
-ldy positionl
-cpy #255
-beq bypass4
-cmp #$01
-beq displaypageone
-cmp #$02
-beq displaypagetwo 
-cmp #$03
-beq displaypagethree  
-cmp #$04
-beq displaypagefour  
-bypass4
-    
-rts 
-displaypageone
+adc #3
+sta zeropage5
 
-lda character 
-sta $0400,y
- 
-lda charactercolour
-sta $d800,y
- 
-rts
-displaypagetwo
+lda positionl
 
-lda character 
-sta $0500,y
- 
-lda charactercolour
-sta $d900,y
- 
+
+
+sta zeropage6
+
+lda character
+sta (zeropage6),y
+lda positionh
+adc #$d7
+sta zeropage5
+lda positionl
+sta zeropage6
+lda #2
+sta (zeropage6),y
+
+lda $d012
+cmp #255
+bne displayloop
+
  
 rts
 displaypagefour
@@ -272,131 +266,86 @@ sta $db00,x
  
  
  rts
- 
 movewalls
-ldy increment
- ldx #40
  
- 
+ ldx #0
 backtowherewewere 
- iny
- lda wallpix,y
+inc zeropage4
+ lda wallpix,x
  
- sta wallsbuffer,y
- 
- lda wallsbuffer,y
- iny
- sta wallsbuffer,x
-  
- lda wallpix2,y
- 
- sta wallsbuffer2,y
- 
- lda wallsbuffer2,y
-iny
- sta wallsbuffer2,x
- 
-  
- lda wallpix3,y
- 
- sta wallsbuffer3,y
- 
- lda wallsbuffer3,y
- iny
- sta wallsbuffer3,x
-  
- lda wallpix4,y
- 
- sta wallsbuffer4,y
- 
- lda wallsbuffer4,y
-iny
- sta wallsbuffer4,x
- 
- 
- 
- 
- iny
+ sta (zeropage4),y
  
 
+ 
+ 
  inx
  
  cpx #255
 bne backtowherewewere
  
-
 rts
+
+ 
 
 
 displaywalls
 ldx #0
 ldy #0
- 
-ldx #0
-ldy #0
+
 displaywallslp
-
 inc colorshadow
+afterzerozeropag
  
-lda #0
-sta lookoutbit
- 
- lda wallsbuffer,y
-
- sty zp
- 
-sta $0400,y
- 
-lda wallscolour
-sta $d800,y
-
- 
- 
- lda wallsbuffer2,y
-sta zp2
- 
- 
-sta $0500,y
- 
-lda wallscolour
-sta $d900,y
- 
+stx zeropage4
+ stx zeropage2
  
 
- 
- lda wallsbuffer3,y
- sta zp3
+ lda (zeropage4),y
  
  
+ sta (zeropage2),y
+ lda wallscolour
+sta $d800,x
+sta $d900,x
+sta $da00,x
+ sta $db00,x
+ inx 
+ cpx #0
+ bne displaywallslp
+
+                
  
-sta $0600,y
  
-lda wallscolour
-sta $da00,y
- 
-
-lda wallsbuffer4,y
-sta zp4
- 
-
- 
-sta $0700,y
-
-lda wallscolour
-sta $db00,y
-
-
-
-
-
- iny
-cpy #255
-
-
-bne displaywallslp 
-
  
  rts
+ 
+
+
+ 
+zeropagedefin
+lda zeropage3
+ cmp #$74
+ beq zerozeropage3
+ inc zeropage3
+afterzerozeropag3
+ lda zeropage1
+ cmp #$08
+ beq zerozeropage
+  inc zeropage1
+rts
+zerozeropage3
+lda #$70
+sta zeropage3
+jmp afterzerozeropag3
+rts
+zerozeropage
+lda #$04
+sta zeropage1
+jmp afterzerozeropag
+rts
+
+
+
  
 maskingnoncollidablebits
 ldx #0
