@@ -35,15 +35,72 @@ dojoy
 lda $dc00
 sta lastkey
 rts
+ballmovement
+ 
+movedown
+ clc
+lda positionl
+adc movementno
+ 
+ sta positionl
+bcs incresehighbytejmp
+  sta positionl
+rts
+ 
+ 
+ballmovement2
+ 
+moveup
+sec
+lda positionl
+sbc movementno2
+ 
+ 
+ sta positionl
+bcc decreasehibytejmp
+ 
+  sta positionl
+
+
+rts
+ballmovement3
+ clc
+moveright
+clc
+lda positionl
+adc movementno3
+   sta positionl
+  bcs incresehighbytejmp
+  sta positionl
+rts
+ballmovement4
+sec 
+moveleft
+sec
+lda positionl
+sbc movementno4
+  sta positionl
+ bcc decreasehibytejmp
+sta positionl
+
+
+rts
+incresehighbytejmp
+jsr incresehighbyte
+rts
+decreasehibytejmp
+jsr decreasehibyte
+rts
+
  
 
 
 jmptoup
- jsr soup
+ jsr up
 lda $d012
 cmp #10
 beq donejump
-jsr soup
+jsr  up
 
 donejump
 
@@ -69,7 +126,7 @@ movejoy
                 cmp #$7b   
 				beq left 
 				cmp #$7e   
-				beq jmptoup
+				beq jsrup
 				cmp #$77    
 				beq right
 				cmp #$7d   
@@ -82,6 +139,9 @@ movejoy
  
 
 rts
+jsrup
+jsr up
+rts
 left 
   
 lda joystktl
@@ -89,24 +149,12 @@ cmp #28
 beq soleft
 rts
 soleft
-lda #1
-sta scrollvalue
- jsr expnoz
-   
-    lda positionl
-    sec
-    sbc #01
-    sta positionl
-    sta positionlbuffer
-  bcc counterrecount
-   lda #01
- sta scrolltrigger
-   
+ jsr noright22
      
     rts
 counterrecount
 jsr decreasehibyte
-lda #255
+lda #1
 sta positionl
  
 rts
@@ -116,20 +164,7 @@ cmp #28
 beq soright
 rts
 soright
-lda #254
-sta scrollvalue
-jsr expnoz
- 
- lda positionl
-    clc
-    adc #01
-    sta positionl
-  sta positionlbuffer
-  bcs recount
-    
-      lda #01
- sta scrolltrigger
-   
+ jsr noleft22
     rts
 recount
 jsr incresehighbyte
@@ -141,7 +176,7 @@ rts
 down
 lda joystktd
 cmp #28
-bne sodown
+beq sodown
  
 rts
 decreasehibyte   
@@ -154,6 +189,8 @@ dec positionh
 out
 rts
 sodown
+ jsr noup22
+
 lda #216
  
  
@@ -177,26 +214,10 @@ lda #216
 up
 lda joystktu
 cmp #26
-jsr soup
+bne soup
 rts
 soup 
-
-lda #40
-sta scrollvalue
- jsr expnoz
- 
-  lda positionl
-    sec
-    sbc #40
-    
-    sta positionl
- sta positionlbuffer
-   
- 
- bcc decreasehibyte
- 
-    lda #01
- sta scrolltrigger
+jsr nodown22
 rts
 
 jsrshowgameover

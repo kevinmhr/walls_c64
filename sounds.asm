@@ -89,12 +89,12 @@ lazbeep1
          jsr soundend1
          lda #%00000011 ; 0 9
          sta attdec
-         lda #%00001110 ; 0 0
+         lda #%00000110 ; 0 0
          sta susrel
          lda #15        ; 15
          sta volume
 shootsnd          
-          lda opposebulletposl
+          lda positionl
           
             ; 12
          sta hifreq
@@ -153,7 +153,7 @@ expnoz
          
          lda #%00000100 ; 1 9
          sta attdec
-         lda #%00000011 ; 0 0
+         lda #%00001011 ; 0 0
          sta susrel
          lda #15        ; 15
          sta volume

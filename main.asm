@@ -79,6 +79,10 @@ wallsbuffer=$7000
 wallsbuffer2=$7100
 wallsbuffer3=$7200
 wallsbuffer4=$7300
+movementno = $79
+movementno2 = $72
+movementno3 = $96
+movementno4 = $97
 
 *=$0801
         !byte    $1E, $08, $0A, $00, $9E, $20, $28,  $32, $30, $38, $30, $29, $3a, $8f, $20, $28, $43, $29, $20, $32, $30, $32, $31, $20, $4D, $54, $53, $56, $00, $00, $00
@@ -173,7 +177,12 @@ lda #80
 sta character3
 lda #0
 sta $d020
- 
+ lda #39
+sta movementno
+lda #0
+sta movementno2
+lda #0
+sta movementno3
  lda #2
  sta opposebulletcolor
 lda #03
@@ -327,6 +336,15 @@ ldx #0
 
 
 
+ jsr ballmovement2
+ jsr ballmovement
+ jsr ballmovement3
+ 
+ jsr ballmovement4
+
+  jsr dojoy
+ jsr movejoy
+ 
  ldx #0
 ldy #$0
    
@@ -354,9 +372,7 @@ inc opposebulletcolor
  jsr maskingnoncollidablebits
  
 
-  jsr dojoy
- jsr movejoy
- 
+
 
 
 
@@ -815,7 +831,7 @@ jsr loadwalls
 rts
  
 addscore		
-     
+     jsr expnoz
              jsr changeblockcharacter
               
                jsr movewalls
@@ -830,7 +846,7 @@ addscore
 			    lda #0
 			    ldx #0
 			    ldy #0
-				jsr lazbeep1
+				
 				inc scoreones
 			 
                

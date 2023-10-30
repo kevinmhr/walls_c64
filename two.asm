@@ -1,3 +1,4 @@
+;walls
 smiley 
 ldx #0
 smileyloop
@@ -846,33 +847,109 @@ rts
 
 
 nodown2
- jsr  sodown
-lda #5
-sta joystktd
 
+  ;jsr lazbeep1
+nodown22
+  lda #5
+  sta joystktd
+lda #0
+sta movementno
+
+lda #40
+sta movementno2
+
+lda movementno3
+cmp #0
+beq zeromovement
+dec movementno3
+lda movementno4
+cmp #0
+beq zeromovement
+dec movementno4
+zeromovement
 rts 
+ 
 
+ 
 noright2
+jsr lazbeep1
+noright22
 lda #48
 sta joystktr
  
+lda #0
+ 
+sta movementno3
+ 
+ 
+ 
+
+lda movementno4
+cmp #2
+beq holdmovement4
+inc movementno4
+
  
 rts
  
+holdmovement4
+
+lda #23
+sta joystktl
+
+
+lda #1
+sta movementno4
+rts
+ 
+holdmovement3
+lda #48
+sta joystktr
+lda #1
+sta movementno3
+rts
 noleft2
+jsr lazbeep1
+noleft22
 lda #23
 sta joystktl
  
- 
-rts
- 
-noup2
-lda #26
-sta joystktu
 lda #0
-sta scrollvalue
-rts 
+ 
+ 
+sta movementno4
 
+lda movementno3
+cmp #2
+beq holdmovement3
+inc movementno3
+
+rts
+
+noup2
+;jsr lazbeep1
+
+noup22
+lda #40
+sta movementno
+
+lda #0
+sta movementno2
+; lda #26
+; sta joystktu
+ 
+lda #0
+
+sta scrollvalue
+lda movementno3
+cmp #0
+beq zeromovement
+dec movementno3
+lda movementno4
+cmp #0
+beq zeromovement
+dec movementno4
+rts 
 correctwalls
 ldx #0
 correctwallslp
