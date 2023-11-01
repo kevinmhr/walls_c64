@@ -268,8 +268,8 @@ sta $db00,x
  
  rts
 movewalls
- 
- ldx #0
+ inc increment2
+ ldx increment2
 backtowherewewere 
 inc zeropage4
  lda wallpix,x
@@ -403,7 +403,7 @@ collisionhi
  
 lda #28
 sta joystktr 
-lda #28
+lda #5
 sta joystktd 
 lda #28
 sta joystktl
@@ -850,13 +850,12 @@ nodown2
 
   ;jsr lazbeep1
 nodown22
-  lda #5
+  lda #28
   sta joystktd
-lda #0
+lda #40
 sta movementno
 
-lda #40
-sta movementno2
+ 
 
 lda movementno3
 cmp #0
@@ -885,9 +884,9 @@ sta movementno3
  
 
 lda movementno4
-cmp #2
-beq holdmovement4
-inc movementno4
+cmp #1
+ beq holdmovement4
+ inc movementno4
 
  
 rts
@@ -920,9 +919,9 @@ lda #0
 sta movementno4
 
 lda movementno3
-cmp #2
-beq holdmovement3
-inc movementno3
+cmp #1
+ beq holdmovement3
+ inc movementno3
 
 rts
 
@@ -931,24 +930,23 @@ noup2
 
 noup22
 lda #40
-sta movementno
-
-lda #0
 sta movementno2
-; lda #26
-; sta joystktu
+
+ 
+  lda #26
+  sta joystktu
  
 lda #0
 
 sta scrollvalue
 lda movementno3
 cmp #0
-beq zeromovement
-dec movementno3
+ beq zeromovement
+ dec movementno3
 lda movementno4
 cmp #0
-beq zeromovement
-dec movementno4
+ beq zeromovement
+ dec movementno4
 rts 
 correctwalls
 ldx #0

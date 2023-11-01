@@ -335,12 +335,27 @@ ldx #0
  
 
 
-
+ 
+  jsr ballmovement
  jsr ballmovement2
- jsr ballmovement
+
+ 
+ 
  jsr ballmovement3
  
  jsr ballmovement4
+ 
+ lda #0
+sta movementno
+
+lda #0
+sta movementno2
+
+lda #0
+sta movementno3
+
+lda #0
+sta movementno4
 
   jsr dojoy
  jsr movejoy
@@ -1108,14 +1123,14 @@ oppbulletchardata
           !byte   %00111000
           
 sidebulletchardata              
-          !byte   %00111100
+          !byte   %11111111
           !byte   %01111110
           !byte   %11000011
           !byte   %11111111
           !byte   %11111111
           !byte   %11111111
           !byte   %01111110
-          !byte   %00111100          
+          !byte   %11111111         
 
 
   !source "two.asm"    

@@ -176,7 +176,7 @@ rts
 down
 lda joystktd
 cmp #28
-beq sodown
+bne sodown
  
 rts
 decreasehibyte   
@@ -189,23 +189,7 @@ dec positionh
 out
 rts
 sodown
- jsr noup22
-
-lda #216
- 
- 
-   jsr expnoz
-   lda positionl
- 
-    clc
-    adc #40
-    sta positionl
-    sta positionlbuffer
-    
-    bcs incresehighbyte
- 
-    lda #01
- sta scrolltrigger
+ jsr nodown22
  
  
  
@@ -213,11 +197,11 @@ lda #216
     rts
 up
 lda joystktu
-cmp #26
-bne soup
+cmp #28
+beq soup
 rts
 soup 
-jsr nodown22
+jsr noup22
 rts
 
 jsrshowgameover
